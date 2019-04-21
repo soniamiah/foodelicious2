@@ -1,0 +1,158 @@
+<!-- Fonts reference: Fontawesome.com. (2019). Font Awesome. [online]
+Available at: https://fontawesome.com/icons/fire?style=solid [Accessed 21 Apr. 2019].-->
+
+<!-- Star rating: Mirko, (2019). [online]
+Available at: https://codepen.io/mrk1989/pen/mLeHJ [Accessed 21 Apr. 2019].-->
+{% extends 'blog/base.html' %}
+
+
+{% block content %}
+
+<div class="title">
+<h1>{{recipe.title}} </h1>
+</div>
+<div class="container-fluid ">
+
+
+<img class="center" src="{{recipe.image}}"/>
+<br>
+
+</div>
+
+{% if user.is_authenticated %}
+
+{% block rates %}
+<div class="container-fluid" align= "center">
+<div class="rate" id= "rate">
+
+
+<fieldset class="rating" id="ratingFields">
+    <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+    <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+    <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Medium - 3 stars"></label>
+    <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kind of bad - 2 stars"></label>
+    <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Bad - 1 star"></label>
+</fieldset>
+<br/>
+<br/>
+<br>
+<span class= "info"></span>
+<br>
+
+<span class= "info2"></span>
+
+
+</div>
+
+<script>
+
+$(document).ready(function(){
+
+
+  $('#ratingFields').change(function(event){
+    console.log($("[name=rating]:checked").val());
+    $.ajax({
+      method:'POST',
+      url: '/rating',
+      csrfmiddlewaretoken: '{{ csrf_token }}',
+      data:{rating:$("[name=rating]:checked").val(), recipe:{{ recipe.id }}},
+
+      success: function(info){
+        $('.info').html("Your rating is: <b>"+$("[name=rating]:checked").val()+"</b>")
+
+      }
+    })
+    $.ajax({
+
+      url: '/getRating/' + {{ recipe.id }},
+      method: "GET",
+      success: function(resp){
+
+      var txt= JSON.parse(resp)
+        console.log(JSON.parse(resp));
+        $('.info2').html("The average rating is: <b>" +txt.average.toFixed(2)+ "</b>")
+
+      }
+    })
+    })
+
+
+
+
+});
+</script>
+<br>
+
+
+{% endblock %}
+
+
+{% endif %}
+</div>
+<div class="container-fluid ">
+
+{% block joke%}
+
+<h4 style="font-family: 'Slabo 27px', serif;color:#437691"> Random food joke: (provided by Spoonacular)
+  <br>{{jokes.text}}
+  </h4>
+{% endblock %}
+
+<div id= "wrapper">
+  <h3 style=" color:#3cd991;">Ingredients </h3>
+  <div id= "first">
+  {% for ingredient in recipe.extendedIngredients %}
+
+<div>
+      {{ingredient.originalString}}
+
+  </div>
+
+  {% endfor %}
+</div>
+
+
+  <div id="second">
+
+  <p>Serves: {{ recipe.servings}} <i class="fas fa-users"></i> </p>
+  <p>Preparation time: {{recipe.preparationMinutes}} minutes <i class="far fa-hourglass"></i></p>
+  <p> Cooking time: {{recipe.preparationMinutes}} minutes <i class="far fa-clock"></i></p>
+  <p> Health Score: {{recipe.healthScore}} <i class="fas fa-weight"></i></p>
+
+  {% if recipe.veryHealthy%}
+  <p>VeryHealthy <i class="fas fa-file-medical-alt"></i></p>
+  {% endif %}
+  {% if recipe.vegetarian%}
+  <p>Vegetarian <i class="fab fa-envira"></i></p>
+  {% endif %}
+  {% if recipe.vegan%}
+  <p>Vegan <i class="fas fa-seedling"></i></p>
+  {% endif %}
+  {% if recipe.glutenFree%}
+  <p>GlutenFree </p>
+  {% endif %}
+  {% if recipe.cheap%}
+  <p>Cheap <i class="fas fa-pound-sign"></i></p>
+  {% endif %}
+  {% if recipe.veryPopular%}
+  <p>Very Popular <i class="fas fa-fire"></i></p>
+  {% endif %}
+
+  <p> Original source: <a href="{{recipe.sourceUrl}}"> <br>{{recipe.sourceUrl}}</a></p>
+
+  </div>
+
+
+</div>
+  <br>
+  <h3 style=" color:#3cd991">Instructions:</h3>
+<div class="container">
+
+
+<p>{{recipe.instructions}}</p>
+</div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,7 @@
+pip install django
+pip3 install django-bootstrap3
+pip install django-crispy-forms
+pip3 install pillow
+pip install django-quicky
+pip install django-admin-views
+pip install requests

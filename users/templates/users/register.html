@@ -1,0 +1,23 @@
+<!--Schafer, C. (2019). CoreyMSchafer/code_snippets. [online]
+GitHub. Available at: https://github.com/CoreyMSchafer/code_snippets/tree/master/Django_Blog
+[Accessed 1 Dec. 2018].-->
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section">
+      <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+          <legend class="border-bottom mb-4">Join Today</legend>
+          {{form| crispy }}
+        </fieldset>
+        <div class="form-group">
+          <button class="btn btn-outline-info" type="submit">Sign Up</button>
+
+        </div>
+      </form>
+      <div class="border-top pt-3">
+        <small class="text-muted">Already have an account? <a class="ml-2" href="{% url 'login' %}"> Sign In</a> </small>
+      </div>
+    </div>
+{% endblock content %}
